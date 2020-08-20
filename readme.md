@@ -1,4 +1,4 @@
-<img src="header.png">
+<img src="header.png" width="300">
 
 # Voice Messages for Slack
 
