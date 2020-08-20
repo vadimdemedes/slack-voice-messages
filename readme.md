@@ -10,7 +10,7 @@ Install this extension from [Chrome Web Store](https://chrome.google.com/webstor
 
 After you install this extension, a new button with a microphone icon will be added to the message bar in Slack.
 
-<img src="header.png" width="300">
+<img src="screenshot.png" width="300">
 
 1. Click the button with a microphone
 2. Allow this extension to use your microphone (you only need to do this once)
