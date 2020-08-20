@@ -1,0 +1,19 @@
+{
+	"name": "Voice Messages for Slack",
+	"version": "1.0.0",
+	"description": "Record voice messages and send them in Slack",
+	"manifest_version": 2,
+	"icons": {
+		"32": "assets/logo32.png",
+		"48": "assets/logo48.png",
+		"128": "assets/logo128.png"
+	},
+	"permissions": ["*://*.slack.com/"],
+	"content_scripts": [
+		{
+			"matches": ["*://*.slack.com/*"],
+			"js": ["content.js"],
+			"run_at": "document_idle"
+		}
+	]
+}

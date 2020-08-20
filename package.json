@@ -1,0 +1,33 @@
+{
+	"name": "slack-voice-messages",
+	"version": "1.0.0",
+	"description": "Voice messages for Slack",
+	"private": true,
+	"scripts": {
+		"build": "parcel build content.js",
+		"dev": "parcel watch content.js --no-hmr",
+		"pretest": "npm run build",
+		"test": "xo && web-ext lint --source-dir=dist"
+	},
+	"dependencies": {
+		"date-fns": "^2.15.0",
+		"downloadjs": "^1.4.7",
+		"sweetalert2": "^9.17.1"
+	},
+	"devDependencies": {
+		"@vdemedes/prettier-config": "^1.0.1",
+		"parcel-bundler": "^1.12.4",
+		"parcel-plugin-static-files-copy": "^2.2.1",
+		"prettier": "^2.0.5",
+		"web-ext": "^3.2.1",
+		"xo": "^0.33.0"
+	},
+	"prettier": "@vdemedes/prettier-config",
+	"browserslist": [
+		"last 1 Chrome version"
+	],
+	"xo": {
+		"env": "browser",
+		"prettier": true
+	}
+}
