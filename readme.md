@@ -4,7 +4,7 @@
 
 ## Install
 
-Install this extension from [Chrome Web Store](https://chrome.google.com/webstore/category/extensions).
+Install this extension from [Chrome Web Store](https://chrome.google.com/webstore/detail/voice-messages-for-slack/onafjdeemadmhlhlelfalpfanmfemodi?hl=en&authuser=0).
 
 ## Usage
 
