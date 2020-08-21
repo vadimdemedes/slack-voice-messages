@@ -1,6 +1,7 @@
 import SweetAlert from 'sweetalert2';
 import download from 'downloadjs';
 import format from 'date-fns/format';
+import MicRecorder from 'mic-recorder-to-mp3';
 
 const addStyles = () => {
 	const style = document.createElement('style');
@@ -29,12 +30,30 @@ const addStyles = () => {
 			}
 		}
 
+		@keyframes slack-voice-pulse-keyframes {
+			0% {
+				opacity: 1;
+			}
+
+			50% {
+				opacity: 0.5;
+			}
+
+			100% {
+				opacity: 1;
+			}
+		}
+
 		.slack-voice-popup-show {
 			animation: slack-voice-popup-show-keyframes 200ms cubic-bezier(0.645, 0.045, 0.355, 1);
 		}
 
 		.slack-voice-popup-hide {
 			animation: slack-voice-popup-hide-keyframes 200ms cubic-bezier(0.645, 0.045, 0.355, 1);
+		}
+
+		.slack-voice-pulse {
+			animation: slack-voice-pulse-keyframes 1.4s linear alternate infinite;
 		}
 	`;
 
@@ -62,6 +81,9 @@ const showRecordingAlert = () => {
 		},
 		hideClass: {
 			popup: 'slack-voice-popup-hide'
+		},
+		customClass: {
+			image: 'slack-voice-pulse'
 		}
 	});
 };
@@ -84,25 +106,25 @@ const showSuccessAlert = () => {
 };
 
 const record = async stream => {
-	const recorder = new MediaRecorder(stream, {mimeType: 'audio/webm'});
-	const chunks = [];
-	let canceled = false;
+	try {
+		const recorder = new MicRecorder({
+			bitRate: 128
+		});
 
-	const onData = event => {
-		if (event.data.size > 0) {
-			chunks.push(event.data);
-		}
-	};
+		await recorder.start();
 
-	const onStop = () => {
-		if (canceled) {
+		const result = await showRecordingAlert();
+		recorder.stop();
+
+		if (result.isDismissed) {
 			return;
 		}
 
-		const blob = new Blob(chunks);
+		const [buffer, blob] = await recorder.getMp3();
 		const timestamp = format(new Date(), "yyyy-MM-dd 'at' HH.mm.ss");
-		const name = `Voice Recording ${timestamp}.wav`;
-		download(blob, name, 'audio/webm');
+		const name = `Voice Recording ${timestamp}.mp3`;
+
+		download(blob, name, 'audio/mp3');
 		showSuccessAlert();
 
 		const input = document.querySelector('input[type="file"]');
@@ -110,25 +132,8 @@ const record = async stream => {
 		if (input) {
 			input.click();
 		}
-
-		recorder.removeEventListener('dataavailable', onData);
-		recorder.removeEventListener('stop', onStop);
-	};
-
-	recorder.addEventListener('dataavailable', onData);
-	recorder.addEventListener('stop', onStop);
-	recorder.start();
-
-	const result = await showRecordingAlert();
-
-	if (result.isDismissed) {
-		canceled = true;
-	}
-
-	recorder.stop();
-
-	for (const track of stream.getAudioTracks()) {
-		track.stop();
+	} catch (error) {
+		console.error(error);
 	}
 };
 
@@ -141,12 +146,14 @@ const run = () => {
 		return;
 	}
 
+	const hasFormattingButton = buttons.querySelectorAll('button').length === 5;
+
 	const button = document.createElement('button');
 	button.className =
 		'c-button-unstyled c-icon_button c-icon_button--light c-icon_button--size_medium c-texty_input__button';
 	button.type = 'button';
 	button.style.position = 'absolute';
-	button.style.right = '134px';
+	button.style.right = hasFormattingButton ? '166px' : '134px';
 	button.innerHTML =
 		'<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-mic"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"></path><path d="M19 10v2a7 7 0 0 1-14 0v-2"></path><line x1="12" y1="19" x2="12" y2="23"></line><line x1="8" y1="23" x2="16" y2="23"></line></svg>';
 
@@ -168,4 +175,7 @@ const run = () => {
 	buttons.append(button);
 };
 
-window.addEventListener('load', run);
+window.addEventListener('load', () => {
+	// Slack inserts formatting button async after load, so we'll need to wait for that
+	setTimeout(run, 1000);
+});

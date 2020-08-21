@@ -12,6 +12,7 @@
 	"dependencies": {
 		"date-fns": "^2.15.0",
 		"downloadjs": "^1.4.7",
+		"mic-recorder-to-mp3": "^2.2.2",
 		"sweetalert2": "^9.17.1"
 	},
 	"devDependencies": {
