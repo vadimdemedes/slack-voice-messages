@@ -62,8 +62,8 @@ const addStyles = () => {
 
 const showRecordingAlert = () => {
 	return SweetAlert.fire({
-		title: 'Recording...',
-		text: 'When you\'re done, click "Send" or press Enter.',
+		title: 'Recording…',
+		text: 'When you’re done, click “Send” or press Enter.',
 		allowEscapeKey: false,
 		allowOutsideClick: false,
 		cancelButtonText: 'Cancel',
